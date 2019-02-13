@@ -17,7 +17,7 @@ public class Coordinates {
     
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")\nlength = " + length + "height = " + height;
+        return "(" + x + ", " + y + ")\nlength = " + length + ", height = " + height;
     }
     
     public int getX() {

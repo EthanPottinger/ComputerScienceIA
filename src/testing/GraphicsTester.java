@@ -9,15 +9,14 @@ import tools.*;
  */
 public class GraphicsTester extends JFrame {
     
-    JLabel j;
+    CanvasThing c;
     
     public GraphicsTester() {
-        Coordinates coordinates = new Coordinates(0, 0, 10, 10);
+        this.setSize(1000, 700);
         this.setVisible(true);
-        this.setSize(500, 500);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        j = new JLabel("What", 10);
-        j.setVisible(true);
+        c = new CanvasThing(5, 5, 10, 10);
+        this.add(c);
     }
      
 }
