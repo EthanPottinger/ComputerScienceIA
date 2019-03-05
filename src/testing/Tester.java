@@ -1,5 +1,7 @@
 package testing;
 
+import testing.assignments.AssignmentTest;
+
 /**
  *
  * @author e.pottinger
@@ -7,11 +9,10 @@ package testing;
 public class Tester {
     
     public Tester() {
-        System.out.println("Testing begins...");
+        System.out.println("Testing started");
         
-        GraphicsTester g = new GraphicsTester();
+        AssignmentTest stuff = new AssignmentTest();
         
-        System.out.println("...Testing ends");
+        System.out.println("Testing ended");
     }
-    
 }
