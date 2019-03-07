@@ -585,7 +585,9 @@ public class LinkedList<T> {
      * @return The LinkedList created
      */
     public LinkedList subList(int from, int to) {
-        if(!inRange(from) || !inRange(to) || from > to) return null;
+        if(!inRange(from) || !inRange(to) || from > to){
+            return null;
+        }
         LinkedList<T> list = new LinkedList<>();
         for(int i = from; i <= to; i++) {
             list.add(this.get(i));

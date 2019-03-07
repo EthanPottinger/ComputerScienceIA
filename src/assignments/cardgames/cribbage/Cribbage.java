@@ -183,7 +183,7 @@ public class Cribbage {
                             System.out.println(playerCards);
                             if(playerCards.get(j).valueWithFaces10() + num <= 31) options[j] = playerCards.get(j).toString();
                         }
-                        LinkedList<Card> cardsInPlay = cards.subList(start, cards.size());
+                        LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
                         String cardStuff = "";
                         if(cardsInPlay != null) cardStuff = cardsInPlay.toString();
                         String choice = GlobalMethods.choose(cards.toString() + "\n" + cardStuff + "\nChoose a card to play\n\n" + playerCards.toString(), "Cribbage Player 1", options);
@@ -243,7 +243,6 @@ public class Cribbage {
         int sameCards = 1;
         for(int i = cards.size() - 1; i > 0; i++) {
             if(cards.get(i).value() == cards.get(i - 1).value()) {
-                System.out.println(sameCards + "\n\n you get here mahfucker");
                 sameCards++;
             }
             else return 0;
