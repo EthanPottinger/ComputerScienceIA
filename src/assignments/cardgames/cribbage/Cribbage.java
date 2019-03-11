@@ -3,6 +3,7 @@ package assignments.cardgames.cribbage;
 import cardtoolkit.*;
 import globalmethods.*;
 import collections.*;
+import jdk.nashorn.internal.objects.Global;
 
 /**
  * Cribbage.java - 
@@ -226,10 +227,12 @@ public class Cribbage {
         int score = 0;
         for(int i = 3; i <= cards.size(); i++) {
             int[] array = new int[i];
-            for(int j = cards.size() - 1; j >= 0; j++) {
-                array[i] = player2.getHand().getCard(j).value();
+            for(int j = array.length - 1; j >= 0; j--) {
+                array[j] = cards.get(j).value();
+                System.out.println(cards.get(j).value());
             }
             array = GlobalMethods.sort(array);
+            GlobalMethods.outputArray(array);
             int run = 1;
             for(int j = 0; j < array.length - 1; j++) {
                 if(array[j] + 1 == array[j + 1]) run++;
@@ -241,7 +244,7 @@ public class Cribbage {
     }
     public int getPegPairsPoints(LinkedList<Card> cards) {
         int sameCards = 1;
-        for(int i = cards.size() - 1; i > 0; i++) {
+        for(int i = cards.size() - 1; i > 0; i--) {
             if(cards.get(i).value() == cards.get(i - 1).value()) {
                 sameCards++;
             }
