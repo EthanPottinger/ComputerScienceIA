@@ -181,7 +181,6 @@ public class Cribbage {
                     }
                     else{
                         for(int j = 0; j < options.length; j++) {
-                            System.out.println(playerCards);
                             if(playerCards.get(j).valueWithFaces10() + num <= 31) options[j] = playerCards.get(j).toString();
                         }
                         LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
@@ -196,7 +195,6 @@ public class Cribbage {
                                 cards.add(card);
                                 num += card.valueWithFaces10();
                                 if(num == 15 || num == 31) pointsToAdd += 2;
-                                System.out.println(cardsInPlay + "        CIP");
                                 if(cardsInPlay != null){
                                     cardsInPlay.add(card);
                                     pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
@@ -208,6 +206,15 @@ public class Cribbage {
                             }
                         }
                     }
+                }
+                LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
+                int maxScore = 0;
+                for(int i = 0; i < player2.getHand().size(); i++) {
+                    Card card = (Card)player2.getHand().getCards().get(i);
+                    int pointsToAdd = 0;
+                    cardsInPlay.add(card);
+                    num += card.valueWithFaces10();
+                    if(num == 15 || num == 31) pointsToAdd += 2;
                 }
             }
             while(cards.size() != 8);
@@ -229,7 +236,6 @@ public class Cribbage {
             int[] array = new int[i];
             for(int j = array.length - 1; j >= 0; j--) {
                 array[j] = cards.get(j).value();
-                System.out.println(cards.get(j).value());
             }
             array = GlobalMethods.sort(array);
             GlobalMethods.outputArray(array);
