@@ -178,6 +178,7 @@ public class Cribbage {
                     if(optionsNum == 0) {
                         GlobalMethods.output("Go, Player 2 gets 1 point");
                         player2.addScore(1);
+                        num = 0;
                     }
                     else{
                         for(int j = 0; j < options.length; j++) {
@@ -195,7 +196,7 @@ public class Cribbage {
                                 cards.add(card);
                                 num += card.valueWithFaces10();
                                 if(num == 15 || num == 31) pointsToAdd += 2;
-                                if(cardsInPlay != null){
+                                if(cardsInPlay != null) {
                                     cardsInPlay.add(card);
                                     pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                                 }
@@ -208,13 +209,45 @@ public class Cribbage {
                     }
                 }
                 LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
+                boolean canGo = false;
                 int maxScore = 0;
+                int points = 0;
+                int option = 0;
                 for(int i = 0; i < player2.getHand().size(); i++) {
                     Card card = (Card)player2.getHand().getCards().get(i);
-                    int pointsToAdd = 0;
+                    if(card.valueWithFaces10() + num <= 31) {
+                        canGo = true;
+                        int pointsToAdd = 0;
+                        cardsInPlay.add(card);
+                        num += card.valueWithFaces10();
+                        if(num == 15 || num == 31) pointsToAdd += 2;
+                        pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
+                        if(pointsToAdd >= maxScore) {
+                            maxScore = pointsToAdd;
+                            option = i;
+                        }
+                        if(num == 15 || num == 31) pointsToAdd -= 2;
+                        pointsToAdd -= getPegPairsPoints(cardsInPlay) - getPegRun(cardsInPlay);
+                        num -= card.valueWithFaces10();
+                        cardsInPlay.remove(card);
+                    }
+                }
+                if(canGo) {
+                    System.out.println(player2.getHand());
+                    Card card = (Card)player2.getHand().getCards().get(option);
                     cardsInPlay.add(card);
+                    player2.returnCard(card);
+                    cards.add(card);
                     num += card.valueWithFaces10();
-                    if(num == 15 || num == 31) pointsToAdd += 2;
+                    if(num == 15 || num == 31) points += 2;
+                    points += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
+                    GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
+                    player2.addScore(points);
+                }
+                else {
+                    GlobalMethods.output("Player 2 says go, player 1 gets 1 point");
+                    player1.addScore(1);
+                    num = 0;
                 }
             }
             while(cards.size() != 8);
