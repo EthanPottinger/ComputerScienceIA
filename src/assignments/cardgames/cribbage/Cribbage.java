@@ -3,7 +3,6 @@ package assignments.cardgames.cribbage;
 import cardtoolkit.*;
 import globalmethods.*;
 import collections.*;
-import jdk.nashorn.internal.objects.Global;
 
 /**
  * Cribbage.java - 
@@ -187,7 +186,7 @@ public class Cribbage {
                         LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
                         String cardStuff = "";
                         if(cardsInPlay != null) cardStuff = cardsInPlay.toString();
-                        String choice = GlobalMethods.choose(cards.toString() + "\n" + cardStuff + "\nChoose a card to play\n\n" + playerCards.toString(), "Cribbage Player 1", options);
+                        String choice = GlobalMethods.choose(cards.toString() + "\n" + cardStuff + "\n" + num + "\n" + "Choose a card to play\n\n" + playerCards.toString(), "Cribbage Player 1", options);
                         for(int j = 0; j < playerCards.size(); j++) {
                             if(playerCards.get(j).toString().equals(choice)) {
                                 int pointsToAdd = 0;
