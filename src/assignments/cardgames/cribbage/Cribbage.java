@@ -167,6 +167,7 @@ public class Cribbage {
         int start = 0;
         if(turn == 1) {
             do {
+                LinkedList<Card> cardsInPlay = new LinkedList();
                 if(playerCards.size() != 0) {
                     for(int i = 0; i < playerCards.size(); i++) {
                         if(playerCards.get(i).valueWithFaces10() + num <= 31){
@@ -177,16 +178,14 @@ public class Cribbage {
                     if(optionsNum == 0) {
                         GlobalMethods.output("Go, Player 2 gets 1 point");
                         player2.addScore(1);
+                        cardsInPlay.clear();
                         num = 0;
                     }
                     else{
                         for(int j = 0; j < options.length; j++) {
                             if(playerCards.get(j).valueWithFaces10() + num <= 31) options[j] = playerCards.get(j).toString();
                         }
-                        LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
-                        String cardStuff = "";
-                        if(cardsInPlay != null) cardStuff = cardsInPlay.toString();
-                        String choice = GlobalMethods.choose(cards.toString() + "\n" + cardStuff + "\n" + num + "\n" + "Choose a card to play\n\n" + playerCards.toString(), "Cribbage Player 1", options);
+                        String choice = GlobalMethods.choose(cards.toString() + "\n" + cardsInPlay.toString() + "\n" + num + "\n" + "Choose a card to play\n\n" + playerCards.toString(), "Cribbage Player 1", options);
                         for(int j = 0; j < playerCards.size(); j++) {
                             if(playerCards.get(j).toString().equals(choice)) {
                                 int pointsToAdd = 0;
@@ -195,19 +194,20 @@ public class Cribbage {
                                 cards.add(card);
                                 num += card.valueWithFaces10();
                                 if(num == 15 || num == 31) pointsToAdd += 2;
-                                if(cardsInPlay != null) {
-                                    cardsInPlay.add(card);
-                                    pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
-                                }
+                                cardsInPlay.add(card);
+                                pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                                 GlobalMethods.output(num + " For " + pointsToAdd);
                                 player1.addScore(pointsToAdd);
-                                if(num == 31) start += cardsInPlay.size();
+                                if(num == 31) {
+                                    cardsInPlay.clear();
+                                    start += cardsInPlay.size();
+                                    num = 0;
+                                }
                                 optionsNum = 0;
                             }
                         }
                     }
                 }
-                LinkedList<Card> cardsInPlay = cards.subList(start, cards.size() - 1);
                 boolean canGo = false;
                 int maxScore = 0;
                 int points = 0;
@@ -217,6 +217,7 @@ public class Cribbage {
                     if(card.valueWithFaces10() + num <= 31) {
                         canGo = true;
                         int pointsToAdd = 0;
+
                         cardsInPlay.add(card);
                         num += card.valueWithFaces10();
                         if(num == 15 || num == 31) pointsToAdd += 2;
@@ -246,6 +247,7 @@ public class Cribbage {
                 else {
                     GlobalMethods.output("Player 2 says go, player 1 gets 1 point");
                     player1.addScore(1);
+                    cardsInPlay.clear();
                     num = 0;
                 }
             }
