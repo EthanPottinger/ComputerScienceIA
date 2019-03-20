@@ -164,9 +164,9 @@ public class Cribbage {
         LinkedList<Card> playerCards = player1.getHand().getCards();
         int num = 0;
         int optionsNum = 0;
-        int start = 0;
         if(turn == 1) {
             do {
+                boolean p2CanGo = false;
                 LinkedList<Card> cardsInPlay = new LinkedList();
                 if(playerCards.size() != 0) {
                     for(int i = 0; i < playerCards.size(); i++) {
@@ -194,13 +194,15 @@ public class Cribbage {
                                 cards.add(card);
                                 num += card.valueWithFaces10();
                                 if(num == 15 || num == 31) pointsToAdd += 2;
-                                cardsInPlay.add(card);
+                                System.out.println(cardsInPlay.add(card));
+                                System.out.println(cardsInPlay);
                                 pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                                 GlobalMethods.output(num + " For " + pointsToAdd);
                                 player1.addScore(pointsToAdd);
                                 if(num == 31) {
+                                    System.out.println(cardsInPlay);
                                     cardsInPlay.clear();
-                                    start += cardsInPlay.size();
+                                    cardsInPlay.size();
                                     num = 0;
                                 }
                                 optionsNum = 0;
@@ -208,24 +210,25 @@ public class Cribbage {
                         }
                     }
                 }
-                boolean canGo = false;
-                int maxScore = 0;
-                int points = 0;
-                int option = 0;
-                for(int i = 0; i < player2.getHand().size(); i++) {
-                    Card card = (Card)player2.getHand().getCards().get(i);
-                    if(card.valueWithFaces10() + num <= 31) {
-                        canGo = true;
-                        int pointsToAdd = 0;
-
-                        cardsInPlay.add(card);
-                        num += card.valueWithFaces10();
-                        if(num == 15 || num == 31) pointsToAdd += 2;
-                        pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
-                        if(pointsToAdd >= maxScore) {
-                            maxScore = pointsToAdd;
-                            option = i;
-                        }
+                do {
+                    boolean canGo = false;
+                    int maxScore = 0;
+                    int points = 0;
+                    int option = 0;
+                    for(int i = 0; i < player2.getHand().size(); i++) {
+                        Card card = (Card)player2.getHand().getCards().get(i);
+                        if(card.valueWithFaces10() + num <= 31) {
+                            canGo = true;
+                            int pointsToAdd = 0;
+                            System.out.println(cardsInPlay.add(card));
+                            System.out.println(cardsInPlay);
+                            num += card.valueWithFaces10();
+                            if(num == 15 || num == 31) pointsToAdd += 2;
+                            pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
+                            if(pointsToAdd >= maxScore) {
+                                maxScore = pointsToAdd;
+                                option = i;
+                            }
                         if(num == 15 || num == 31) pointsToAdd -= 2;
                         pointsToAdd -= getPegPairsPoints(cardsInPlay) - getPegRun(cardsInPlay);
                         num -= card.valueWithFaces10();
@@ -233,9 +236,9 @@ public class Cribbage {
                     }
                 }
                 if(canGo) {
-                    System.out.println(player2.getHand());
                     Card card = (Card)player2.getHand().getCards().get(option);
-                    cardsInPlay.add(card);
+                    System.out.println(cardsInPlay.add(card));
+                    System.out.println(cardsInPlay);
                     player2.returnCard(card);
                     cards.add(card);
                     num += card.valueWithFaces10();
@@ -243,6 +246,11 @@ public class Cribbage {
                     points += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                     GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
                     player2.addScore(points);
+                    if(num == 31) {
+                        cardsInPlay.clear();
+                        cardsInPlay.size();
+                        num = 0;
+                    }
                 }
                 else {
                     GlobalMethods.output("Player 2 says go, player 1 gets 1 point");
@@ -250,7 +258,9 @@ public class Cribbage {
                     cardsInPlay.clear();
                     num = 0;
                 }
-            }
+                }
+                while(!p2CanGo);
+            } 
             while(cards.size() != 8);
         }
         if(turn == 2) {
