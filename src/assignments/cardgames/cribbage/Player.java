@@ -75,7 +75,7 @@ public class Player {
     }
     public int runScore() {
         int[] sort = getTypes();
-        GlobalMethods.sort(sort);
+        GlobalMethods.bubbleSort(sort);
         int runScore = 0;
         int run = 1;
         int multiplier = 1;

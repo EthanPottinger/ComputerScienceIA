@@ -186,7 +186,7 @@ public class GlobalMethods {
         System.out.println(sad);
     }
     
-    public static void sort(int[] array) {
+    public static void bubbleSort(int[] array) {
         boolean sorted = true;
         int temp = 0;
         for(int i = array.length - 1; i >= 0; i--) {

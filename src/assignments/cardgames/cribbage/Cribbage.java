@@ -191,16 +191,17 @@ public class Cribbage {
                                     Card card = playerCards.get(j);
                                     playerCards.remove(card);
                                     cards.add(card);
-                                    if(cards.size() == 8) {
-                                        GlobalMethods.output("Last card for 1");
-                                        player1.addScore(1);
-                                    }
+                                    
                                     num += card.valueWithFaces10();
                                     if(num == 15 || num == 31) pointsToAdd += 2;
                                     cardsInPlay.add(card);
                                     pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                                     GlobalMethods.output(num + " For " + pointsToAdd);
                                     player1.addScore(pointsToAdd);
+                                    if(cards.size() == 8) {
+                                        GlobalMethods.output("Last card for 1");
+                                        player1.addScore(1);
+                                    }
                                     if(num == 31) {
                                         cardsInPlay.clear();
                                         cardsInPlay.size();
@@ -249,15 +250,15 @@ public class Cribbage {
                             cardsInPlay.add(card);
                             player2.returnCard(card);
                             cards.add(card);
-                            if(cards.size() == 8) {
-                                GlobalMethods.output("Last card for 1");
-                                player2.addScore(1);
-                            }
                             num += card.valueWithFaces10();
                             if(num == 15 || num == 31) points += 2;
                             points += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                             GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
                             player2.addScore(points);
+                            if(cards.size() == 8) {
+                                GlobalMethods.output("Last card for 1");
+                                player2.addScore(1);
+                            }
                             if(num == 31) {
                                 cardsInPlay.clear();
                                 cardsInPlay.size();
@@ -310,15 +311,16 @@ public class Cribbage {
                             cardsInPlay.add(card);
                             player2.returnCard(card);
                             cards.add(card);
-                            if(cards.size() == 8) {
-                                GlobalMethods.output("Last card for 1");
-                                player2.addScore(1);
-                            }
+                            
                             num += card.valueWithFaces10();
                             if(num == 15 || num == 31) points += 2;
                             points += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                             GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
                             player2.addScore(points);
+                            if(cards.size() == 8) {
+                                GlobalMethods.output("Last card for 1");
+                                player2.addScore(1);
+                            }
                             if(num == 31) {
                                 cardsInPlay.clear();
                                 cardsInPlay.size();
@@ -355,16 +357,16 @@ public class Cribbage {
                                     Card card = playerCards.get(j);
                                     playerCards.remove(card);
                                     cards.add(card);
-                                    if(cards.size() == 8) {
-                                        GlobalMethods.output("Last card for 1");
-                                        player1.addScore(1);
-                                    }
                                     num += card.valueWithFaces10();
                                     if(num == 15 || num == 31) pointsToAdd += 2;
                                     cardsInPlay.add(card);
                                     pointsToAdd += getPegPairsPoints(cardsInPlay) + getPegRun(cardsInPlay);
                                     GlobalMethods.output(num + " For " + pointsToAdd);
                                     player1.addScore(pointsToAdd);
+                                    if(cards.size() == 8) {
+                                        GlobalMethods.output("Last card for 1");
+                                        player1.addScore(1);
+                                    }
                                     if(num == 31) {
                                         cardsInPlay.clear();
                                         cardsInPlay.size();
@@ -402,7 +404,7 @@ public class Cribbage {
                 System.out.println(j);
                 array[j] = cards.get(cards.size() - j - 1).value();
             }
-            GlobalMethods.sort(array);
+            GlobalMethods.bubbleSort(array);
             int run = 1;
             for(int j = 0; j < array.length - 1; j++) {
                 if(array[j] + 1 == array[j + 1]) run++;
