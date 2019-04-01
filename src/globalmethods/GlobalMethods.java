@@ -186,14 +186,21 @@ public class GlobalMethods {
         System.out.println(sad);
     }
     
-    public static int[] sort(int[] array) {
-        int[] sort = new int[array.length];
-        final int DONE = maximum(array) + 1;
-        for(int i = 0; i < array.length; i++) {
-            sort[i] = minimum(array);
-            array[minimumIndex(array)] = DONE; 
+    public static void sort(int[] array) {
+        boolean sorted = true;
+        int temp = 0;
+        for(int i = array.length - 1; i >= 0; i--) {
+            sorted = true;
+            for(int j = 0; j < i; j++) {
+                if(array[j] > array[j + 1]) {
+                    sorted = false;
+                    temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+            if(sorted) return;
         }
-        return sort;
     }
     
     public static String choose(String dialog, String title, String[] options) {

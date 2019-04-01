@@ -74,7 +74,8 @@ public class Player {
         return pairs;
     }
     public int runScore() {
-        int[] sort = GlobalMethods.sort(getTypes());
+        int[] sort = getTypes();
+        GlobalMethods.sort(sort);
         int runScore = 0;
         int run = 1;
         int multiplier = 1;
