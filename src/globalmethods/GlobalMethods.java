@@ -239,4 +239,11 @@ public class GlobalMethods {
         return choice.toString();
     }
     
+    public static boolean yesOrNo(String dialog) {
+        int choice = 0;
+        choice = JOptionPane.showConfirmDialog(null, dialog);
+        if(choice == 0) return true;
+        else return false;
+    }
+    
 }

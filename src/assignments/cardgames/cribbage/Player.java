@@ -230,5 +230,8 @@ public class Player {
     public void addScore(int score) {
         scoreTotal += score;
     }
+    public int getScoreTotal() {
+        return scoreTotal;
+    }
     
 }

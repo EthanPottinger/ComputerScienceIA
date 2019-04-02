@@ -12,6 +12,9 @@ import collections.*;
  */
 public class Cribbage {
 
+    private final int WINNING_SCORE = 120;
+    private final int SKUNK_DIFFERENCE = 30;
+    
     private Player player1;
     public Player player2;
     
@@ -21,26 +24,69 @@ public class Cribbage {
     
     private  int turn;
     
-            
+    private boolean stillPlaying;
+          
     public Cribbage() {
         player1 = new Player();
         player2 = new Player();
         crib = new Hand();
         cut = new Card();
         turn = 1;
+        stillPlaying = true;
     }
     
     public void play() {
         int cut = 0;
         do {
-            cut = cut();
+            turn = cut();
         }
-        while(cut == 0);
-        turn = cut;
-        deal();
-        chooseCards();
-        getCutCard();
-        
+        while(turn == 0);
+        do {
+            boolean p1Wins = false;
+            boolean p2Wins = false;
+            do {
+                deal();
+                chooseCards();
+                getCutCard();
+                pegging();
+                int p1Points = player1.getScore(this.cut);
+                int p2Points = player2.getScore(this.cut);
+                System.out.println(p1Points);
+                System.out.println(p2Points);
+                if(turn == 1) {
+                    player2.addScore(p2Points);
+                    if(player2.getScoreTotal() >= 120) p2Wins = true;
+                    player1.addScore(p1Points);
+                    if(player1.getScoreTotal() >= 120 && !p2Wins) p1Wins = true;
+                    GlobalMethods.output("You got " + p1Points + " Points and player 2 got " + p2Points + " points");
+                }
+                if(turn == 2) {
+                    player1.addScore(p1Points);
+                    if(player1.getScoreTotal() >= 120) p1Wins = true;
+                    player2.addScore(p1Points);
+                    if(player2.getScoreTotal() >= 120 && !p1Wins) p2Wins = true;
+                    GlobalMethods.output("You got " + p1Points + " Points and player 2 got " + p2Points + " points");
+                }
+            }
+            while(p2Wins == false && p1Wins == false);
+            if(p2Wins) {
+                if(WINNING_SCORE - player1.getScoreTotal() >= SKUNK_DIFFERENCE) {
+                    stillPlaying = GlobalMethods.yesOrNo("Player 2 Wins! you lost with " + player1.getScoreTotal() + "Points, you were Skunked!\n\nWould you like to play again?");
+                }
+                else {
+                    stillPlaying = GlobalMethods.yesOrNo("Player 2 Wins! you lost with " + player1.getScoreTotal() + "\n\nWould you like to play again?");
+                }
+            }
+            else if(p1Wins) {
+                if(WINNING_SCORE - player2.getScoreTotal() >= SKUNK_DIFFERENCE) {
+                    stillPlaying = GlobalMethods.yesOrNo("You win! Player 2 lost with " + player2.getScoreTotal() + "Points, you Skunked player 2!\n\nWould you like to play again?");
+                }
+                else {
+                    stillPlaying = GlobalMethods.yesOrNo("You win! Player 2 lost with " + player2.getScoreTotal() + "\n\nWould you like to play again?");
+                }
+            }
+        }
+        while(stillPlaying);
     }
     public int cut() {
         Card p1Card = Hand.deck.drawRandom();
@@ -184,7 +230,7 @@ public class Cribbage {
                             for(int j = 0; j < options.length; j++) {
                                 if(playerCards.get(j).valueWithFaces10() + num <= 31) options[j] = playerCards.get(j).toString();
                             }
-                            String choice = GlobalMethods.choose(cards.toString() + "\n" + cardsInPlay.toString() + "\n" + num + "\n\n" + "Choose a card to play\n" + playerCards.toString(), "Cribbage Player 1", options);
+                            String choice = GlobalMethods.choose(cards.toString() + "\n" + cardsInPlay.toString() + "\n" + num + "\n\nPlayer1: " + player1.getScoreTotal() + "\nPlayer2: " + player2.getScoreTotal() + "\n\nChoose a card to play\n" + playerCards.toString(), "Cribbage Player 1", options);
                             for(int j = 0; j < playerCards.size(); j++) {
                                 if(playerCards.get(j).toString().equals(choice)) {
                                     int pointsToAdd = 0;
@@ -256,7 +302,7 @@ public class Cribbage {
                             GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
                             player2.addScore(points);
                             if(cards.size() == 8) {
-                                GlobalMethods.output("Last card for 1");
+                                GlobalMethods.output("Player 2 gets Last card for 1");
                                 player2.addScore(1);
                             }
                             if(num == 31) {
@@ -318,7 +364,7 @@ public class Cribbage {
                             GlobalMethods.output("Player 2 plays " + card + " and gets " + num + " for " + points);
                             player2.addScore(points);
                             if(cards.size() == 8) {
-                                GlobalMethods.output("Last card for 1");
+                                GlobalMethods.output("Player 2 gets Last card for 1");
                                 player2.addScore(1);
                             }
                             if(num == 31) {
@@ -350,7 +396,7 @@ public class Cribbage {
                             for(int j = 0; j < options.length; j++) {
                                 if(playerCards.get(j).valueWithFaces10() + num <= 31) options[j] = playerCards.get(j).toString();
                             }
-                            String choice = GlobalMethods.choose(cards.toString() + "\n" + cardsInPlay.toString() + "\n" + num + "\n\n" + "Choose a card to play\n" + playerCards.toString(), "Cribbage Player 1", options);
+                            String choice = GlobalMethods.choose(cards.toString() + "\n" + cardsInPlay.toString() + "\n" + num + "\n\nPlayer1: " + player1.getScoreTotal() + "\nPlayer2: " + player2.getScoreTotal() + "\n\nChoose a card to play\n" + playerCards.toString(), "Cribbage Player 1", options);
                             for(int j = 0; j < playerCards.size(); j++) {
                                 if(playerCards.get(j).toString().equals(choice)) {
                                     int pointsToAdd = 0;
@@ -401,7 +447,6 @@ public class Cribbage {
         for(int i = 3; i <= cards.size(); i++) {
             int[] array = new int[i];
             for(int j = 0; j < array.length; j++) {
-                System.out.println(j);
                 array[j] = cards.get(cards.size() - j - 1).value();
             }
             GlobalMethods.bubbleSort(array);
