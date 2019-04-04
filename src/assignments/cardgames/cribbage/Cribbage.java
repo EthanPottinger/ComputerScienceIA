@@ -18,8 +18,6 @@ public class Cribbage {
     private Player player1;
     public Player player2;
     
-    private Hand crib;
-    
     private Card cut;
     
     private  int turn;
@@ -29,7 +27,6 @@ public class Cribbage {
     public Cribbage() {
         player1 = new Player();
         player2 = new Player();
-        crib = new Hand();
         cut = new Card();
         turn = 1;
         stillPlaying = true;
@@ -39,6 +36,7 @@ public class Cribbage {
         int cut = 0;
         do {
             turn = cut();
+            if(turn == 0) GlobalMethods.output("The cut was a draw! Draw again");
         }
         while(turn == 0);
         do {
@@ -49,23 +47,35 @@ public class Cribbage {
                 chooseCards();
                 getCutCard();
                 pegging();
-                int p1Points = player1.getScore(this.cut);
-                int p2Points = player2.getScore(this.cut);
-                System.out.println(p1Points);
-                System.out.println(p2Points);
+                int p1Points = player1.countScore(this.cut);
+                int p2Points = player2.countScore(this.cut);
                 if(turn == 1) {
+                    int p1Crib = player1.countCribScore(this.cut);
                     player2.addScore(p2Points);
                     if(player2.getScoreTotal() >= 120) p2Wins = true;
                     player1.addScore(p1Points);
                     if(player1.getScoreTotal() >= 120 && !p2Wins) p1Wins = true;
-                    GlobalMethods.output("You got " + p1Points + " Points and player 2 got " + p2Points + " points");
+                    player1.addScore(p1Crib);
+                    GlobalMethods.output("The cut card was " + this.cut + "\nYour hand was " + player1.getHand() + "\nYou got " + p1Points + " Points\nplayer 2s hand was " + player2.getHand() + "\nPlayer 2 got " + p2Points + " points");
+                    GlobalMethods.output("The cut card was " + this.cut + "\nYour crib was " + player1.getCrib() + "\nYou got " + p1Crib + " points");
+                    player1.returnCards();
+                    player2.returnCards();
+                    player1.returnCrib();
+                    turn = 2;
                 }
-                if(turn == 2) {
+                else if(turn == 2) {
+                    int p2Crib = player2.countCribScore(this.cut);
                     player1.addScore(p1Points);
                     if(player1.getScoreTotal() >= 120) p1Wins = true;
-                    player2.addScore(p1Points);
+                    player2.addScore(p2Points);
                     if(player2.getScoreTotal() >= 120 && !p1Wins) p2Wins = true;
-                    GlobalMethods.output("You got " + p1Points + " Points and player 2 got " + p2Points + " points");
+                    player2.addScore(p2Crib);
+                    GlobalMethods.output("The cut card was " + this.cut + "\nYour hand was " + player1.getHand() + "\nYou got " + p1Points + " Points\nplayer 2s hand was " + player2.getHand() + "\nPlayer 2 got " + p2Points + " points");
+                    GlobalMethods.output("The cut card was " + this.cut + "\nplayer 2s crib was " + player2.getCrib() + "\nplayer 2 got " + p2Crib + " points");
+                    player1.returnCards();
+                    player2.returnCards();
+                    player2.returnCrib();
+                    turn = 1;
                 }
             }
             while(p2Wins == false && p1Wins == false);
@@ -139,8 +149,8 @@ public class Cribbage {
                 for(int j = 0; j < player1.getHand().size(); j++) {
                     if(player1.getHand().getCard(j).toString().equals(choice)) {
                         Card card = player1.getHand().getCard(j);
-                        player1.returnCard(j);
-                        crib.draw(card);
+                        player1.returnCard(card);
+                        player1.drawCrib(card);
                     }
                 }
             }
@@ -153,10 +163,10 @@ public class Cribbage {
                     Card card2 = player2.getHand().getCard(j);
                     player2.returnCard(card1);
                     player2.returnCard(card2);
-                    if(player2.getScore() >= maxScore) {
+                    if(player2.countScore() >= maxScore) {
                         choice1 = card1;
                         choice2 = card2;
-                        maxScore = player2.getScore();
+                        maxScore = player2.countScore();
                     }
                     player2.draw(card1);
                     player2.draw(card2);
@@ -164,6 +174,8 @@ public class Cribbage {
             }
             player2.returnCard(choice1);
             player2.returnCard(choice2);
+            player1.drawCrib(choice1);
+            player1.drawCrib(choice2);
         }
         if(turn == 2) {
             for(int i = 0; i < 2; i++) {
@@ -175,8 +187,8 @@ public class Cribbage {
                 for(int j = 0; j < player1.getHand().size(); j++) {
                     if(player1.getHand().getCard(j).toString().equals(choice)) {
                         Card card = player1.getHand().getCard(j);
-                        player1.returnCard(j);
-                        crib.draw(card);
+                        player1.returnCard(card);
+                        player2.drawCrib(card);
                     }
                 }
             }
@@ -189,10 +201,10 @@ public class Cribbage {
                     Card card2 = player2.getHand().getCard(j);
                     player2.returnCard(card1);
                     player2.returnCard(card2);
-                    if(player2.getScore() >= maxScore) {
+                    if(player2.countScore() >= maxScore) {
                         choice1 = card1;
                         choice2 = card2;
-                        maxScore = player2.getScore();
+                        maxScore = player2.countScore();
                     }
                     player2.draw(card1);
                     player2.draw(card2);
@@ -200,6 +212,8 @@ public class Cribbage {
             }
             player2.returnCard(choice1);
             player2.returnCard(choice2);
+            player2.drawCrib(choice1);
+            player2.drawCrib(choice2);
         }
     }
     public void getCutCard() {
@@ -208,10 +222,17 @@ public class Cribbage {
     }
     public void pegging() {
         LinkedList<Card> cards = new LinkedList<>();
-        LinkedList<Card> playerCards = player1.getHand().getCards();
+        LinkedList<Card> playerCards = new LinkedList<>();
+        LinkedList<Card> opponentCards = new LinkedList<>();
         LinkedList<Card> cardsInPlay = new LinkedList();
         int num = 0;
         int optionsNum = 0;
+        for(int i = 0; i < player1.getHand().size(); i++) {
+            playerCards.add(player1.getHand().getCard(i));
+        }
+        for(int i = 0; i < player2.getHand().size(); i++) {
+            opponentCards.add(player2.getHand().getCard(i));
+        }
         if(turn == 1) {
             do {
                 boolean p1CanGo = false;
@@ -237,7 +258,6 @@ public class Cribbage {
                                     Card card = playerCards.get(j);
                                     playerCards.remove(card);
                                     cards.add(card);
-                                    
                                     num += card.valueWithFaces10();
                                     if(num == 15 || num == 31) pointsToAdd += 2;
                                     cardsInPlay.add(card);
@@ -266,14 +286,14 @@ public class Cribbage {
                     }
                     while(!p1CanGo);
                 }
-                if(player2.getHand().size() != 0) {
+                if(opponentCards.size() != 0) {
                     do {
                         p2CanGo = false;
                         int maxScore = 0;
                         int points = 0;
                         int option = 0;
-                        for(int i = 0; i < player2.getHand().size(); i++) {
-                            Card card = (Card)player2.getHand().getCards().get(i);
+                        for(int i = 0; i < opponentCards.size(); i++) {
+                            Card card = (Card)opponentCards.get(i);
                             if(card.valueWithFaces10() + num <= 31) {
                                 p2CanGo = true;
                                 int pointsToAdd = 0;
@@ -292,9 +312,9 @@ public class Cribbage {
                             }
                         }
                         if(p2CanGo) {
-                            Card card = (Card)player2.getHand().getCards().get(option);
+                            Card card = (Card)opponentCards.get(option);
                             cardsInPlay.add(card);
-                            player2.returnCard(card);
+                            opponentCards.remove(card);
                             cards.add(card);
                             num += card.valueWithFaces10();
                             if(num == 15 || num == 31) points += 2;
@@ -333,8 +353,8 @@ public class Cribbage {
                         int maxScore = 0;
                         int points = 0;
                         int option = 0;
-                        for(int i = 0; i < player2.getHand().size(); i++) {
-                            Card card = (Card)player2.getHand().getCards().get(i);
+                        for(int i = 0; i < opponentCards.size(); i++) {
+                            Card card = (Card)opponentCards.get(i);
                             if(card.valueWithFaces10() + num <= 31) {
                                 p2CanGo = true;
                                 int pointsToAdd = 0;
@@ -353,9 +373,9 @@ public class Cribbage {
                             }
                         }
                         if(p2CanGo) {
-                            Card card = (Card)player2.getHand().getCards().get(option);
+                            Card card = (Card)opponentCards.get(option);
                             cardsInPlay.add(card);
-                            player2.returnCard(card);
+                            opponentCards.remove(card);
                             cards.add(card);
                             
                             num += card.valueWithFaces10();

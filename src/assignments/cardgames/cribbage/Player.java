@@ -13,10 +13,12 @@ import collections.LinkedList;
 public class Player {
     
     private Hand hand;
+    private Hand crib;
     private int scoreTotal;
 
     public Player() {
         hand = new Hand();
+        crib = new Hand();
         scoreTotal = 0;
     }
     public Player(int cardAmount) {
@@ -29,11 +31,20 @@ public class Player {
     public Hand getHand() {
         return hand;
     }
+    public Hand getCrib() {
+        return crib;
+    }
     public Card draw() {
         return hand.draw();
     }
+    public boolean drawCrib(Card card) {
+        return crib.draw(card);
+    }
     public boolean draw(Card card) {
         return hand.draw(card);
+    }
+    public void returnCribCard(int index) {
+        crib.returnCard(index);
     }
     public void returnCard(int index) {
         hand.returnCard(index);
@@ -43,28 +54,45 @@ public class Player {
         hand.draw(card);
         return card;
     }
+    public void returnCrib() {
+        int size = crib.size();
+        for(int i = 0; i < size; i++) {
+            crib.returnCard(0);
+        }
+    }
     public void returnCards() {
-        for(int i = 0; i < hand.size(); i++) {
+        int size = hand.size();
+        for(int i = 0; i < size; i++) {
             hand.returnCard(0);
         }
     }
     public void returnCard(Card card) {
         hand.returnCard(card);
     }
-    public int getScore() {
-        return countPairs()*2 + runScore() + countFifteens()*2 + flush();
+    public int countScore() {
+        return countPairs(hand)*2 + runScore(hand) + countFifteens(hand)*2 + flush(hand);
     }
-    public int getScore(Card cut) {
+    public int countCribScore(Card cut) {
+        crib.draw(cut);
+        int score = countPairs(crib)*2 + runScore(crib) + countFifteens(crib)*2;
+        if(flush(crib) >= 5) score += flush(crib);
+        for (int i = 0; i < hand.size(); i++) {
+            if(hand.getCard(i).suit().equals(cut.suit()) && hand.getCard(i).type().equals(Card.TYPES[10])) score++;
+        }
+        crib.returnCard(cut);
+        return score;
+    }
+    public int countScore(Card cut) {
         hand.draw(cut);
-        int score = countPairs()*2 + runScore() + countFifteens()*2;
-        if(flush() >= 5) score += flush();
+        int score = countPairs(hand)*2 + runScore(hand) + countFifteens(hand)*2;
+        if(flush(hand) >= 4) score += flush(hand);
         for (int i = 0; i < hand.size(); i++) {
             if(hand.getCard(i).suit().equals(cut.suit()) && hand.getCard(i).type().equals(Card.TYPES[10])) score++;
         }
         hand.returnCard(cut);
         return score;
     }
-    public int countPairs() {
+    public int countPairs(Hand hand) {
         int pairs = 0;
         for(int i = 0; i < hand.size() - 1; i++) {
             for(int j = i + 1; j < hand.size(); j++) {
@@ -73,8 +101,8 @@ public class Player {
         }
         return pairs;
     }
-    public int runScore() {
-        int[] sort = getTypes();
+    public int runScore(Hand hand) {
+        int[] sort = getTypes(hand);
         GlobalMethods.bubbleSort(sort);
         int runScore = 0;
         int run = 1;
@@ -108,15 +136,14 @@ public class Player {
                     multiplier = 1;
                     multipliersMultiplier = 1;
                 }
-            }
-            
+            } 
         }
         return runScore;
     }
-    public int countFifteens() {
-        return countFifteenPairs() + countFifteenTriples() + countFifteenQuad() + countFifteenQuint();
+    public int countFifteens(Hand hand) {
+        return countFifteenPairs(hand) + countFifteenTriples(hand) + countFifteenQuad(hand) + countFifteenQuint(hand);
     }
-    private int countFifteenPairs() {
+    private int countFifteenPairs(Hand hand) {
         int fifteens = 0;
         for(int i = 0; i < hand.size(); i++) {
             for(int j = i + 1; j < hand.size(); j++) {
@@ -131,7 +158,7 @@ public class Player {
         }
         return fifteens;
     }
-    private int countFifteenTriples() {
+    private int countFifteenTriples(Hand hand) {
         int fifteens = 0;
         for(int i = 0; i < hand.size(); i++) {
             for(int j = i + 1; j < hand.size(); j++) {
@@ -150,7 +177,7 @@ public class Player {
         }
         return fifteens;
     }
-    private int countFifteenQuad() {
+    private int countFifteenQuad(Hand hand) {
         int fifteens = 0;
         for(int i = 0; i < hand.size(); i++) {
             for(int j = i + 1; j < hand.size(); j++) {
@@ -172,7 +199,7 @@ public class Player {
         }
         return fifteens;
     }
-    private int countFifteenQuint() {
+    private int countFifteenQuint(Hand hand) {
         if(hand.size() == 4) return 0;
         int fifteens = 0;
         for(int i = 0; i < hand.size(); i++) {
@@ -199,14 +226,14 @@ public class Player {
         }
         return fifteens;
     }
-    public int flush() {
+    public int flush(Hand hand) {
         int num = 0;
         for(int i = 0; i < Card.SUITS.length; i++) {
             if(getSuitsNum(Card.SUITS[i]) >= 4) num += getSuitsNum(Card.SUITS[i]);
         }
         return num;
     }
-    public int[] getTypes() {
+    public int[] getTypes(Hand hand) {
         int[] array = new int[hand.size()];
         for(int i = 0; i < hand.size(); i++) {
             array[i] = hand.getCard(i).value();
